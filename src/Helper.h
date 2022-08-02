@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include "Ship.h"
+#include "PlayerShip.h"
+#include "EnemyShip.h"
 #include <vector>
 #include <iostream>
 
@@ -9,28 +10,26 @@ public:
 	Helper(const sf::Vector2i& windowSize, const int enemiesNum, const sf::Texture& enemyTexture,
 		   const sf::Texture& playerTexture, size_t quality);
 
+	void addPlayer(const PlayerShip& player);
+
+	void addEnemy(const EnemyShip& enemy);
+
 	void onFrame();
 private:
 
 	void initEnemies();
 
-	void initPlayer();
+	void initPlayers();
 
-	void calcEnemyPositions();
+	void calcEnemyPosition(EnemyShip& enemy);
 
 	sf::Vector2i calcShipSize(const sf::Vector2i& windowSize);
 
 	sf::RenderWindow mainWindow;
 
-	Ship player;
+	std::vector<PlayerShip> players;
 
-	std::vector<Ship> enemies;
-
-	// Distances between player and enemies
-	std::map<Ship, float> enemiesDistances;
-
-	// Directions to enemies, relative to the player ship
-	std::map<Ship, float> enemiesDirections;
+	std::vector<EnemyShip> enemies;
 
 	// Map size in kilometeres
 	float mapsize = 20.f;

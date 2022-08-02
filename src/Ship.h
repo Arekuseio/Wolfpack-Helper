@@ -17,8 +17,13 @@ public:
 		return physics;
 	}
 
+	sf::Vector2f getPosition() const {
+		return shape.getPosition();
+	}
+
 	bool operator<(const Ship& other) const {
-		return physics.getSpeed() < other.physics.getSpeed();
+		return (this->getPosition() != other.getPosition())
+			&& (this->getPosition().x < other.getPosition().x);
 	}
 
 private:

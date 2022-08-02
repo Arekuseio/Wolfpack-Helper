@@ -37,11 +37,11 @@ public:
 		}
 	}
 
-private:
-
 	bool checkDirection(const float dir) {
 		return (dir <= 360.f && dir >= 0);
 	}
+
+private:
 
 	// Speed in knots
 	float speed = 0.f;
