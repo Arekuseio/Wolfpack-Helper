@@ -35,7 +35,7 @@ void Helper::onFrame() {
 			if (event.type == sf::Event::Closed)
 				mainWindow.close();
 		}
-		mainWindow.clear();
+		mainWindow.clear(sf::Color::Blue);
 
 		for (auto& player : players) {
 			mainWindow.draw(player.getShape());
@@ -53,9 +53,9 @@ sf::Vector2i Helper::calcShipSize(const sf::Vector2i& windowSize) {
 
 	float relation = windowSize.x / windowSize.y;
 
-	float xSize = windowSize.x / (50.f * relation);
+	float xSize = windowSize.x / (25.f * relation);
 
-	float ySize = windowSize.y / (20.f * relation);
+	float ySize = windowSize.y / (10.f * relation);
 
 	return sf::Vector2i(xSize, ySize);
 }

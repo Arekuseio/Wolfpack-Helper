@@ -10,6 +10,8 @@ public:
 	Helper(const sf::Vector2i& windowSize, const int enemiesNum, const sf::Texture& enemyTexture,
 		   const sf::Texture& playerTexture, size_t quality);
 
+	void initBackground(const sf::Texture& backgroundTexture); // TODO: Добавить инициализацию фона
+
 	void addPlayer(const PlayerShip& player);
 
 	void addEnemy(const EnemyShip& enemy);
@@ -26,6 +28,8 @@ private:
 	sf::Vector2i calcShipSize(const sf::Vector2i& windowSize);
 
 	sf::RenderWindow mainWindow;
+
+	sf::Sprite background;
 
 	std::vector<PlayerShip> players;
 

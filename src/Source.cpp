@@ -18,7 +18,7 @@ int main()
     int num = 2;
     size_t points = 100;
     sf::Texture a;
-    a.loadFromFile("img\\ship.jpg");
+    a.loadFromFile("img\\ship.png");
     Helper help(size, num, a, a, points);
     help.onFrame();
     return 0;
