@@ -6,6 +6,7 @@
 
 
 float degreesToRadians(const float degrees);
+float radiansToDegrees(const float radians);
 
 Helper::Helper(const sf::Vector2i& windowSize, const int enemiesNum, const sf::Texture& enemyTexture,
 			   const sf::Texture& playerTexture, size_t quality) {
@@ -112,7 +113,7 @@ void Helper::initPlayers() {
 	}
 }
 
-void Helper::calcEnemyPosition(EnemyShip& enemy) { // TODO: ƒобавить вращение дл€ врагов по направлению их движени€
+void Helper::calcEnemyPosition(EnemyShip& enemy) {
 	sf::Vector2f position(0.f, 0.f);
 	float x = 0;
 	float y = 0;
@@ -128,6 +129,25 @@ void Helper::calcEnemyPosition(EnemyShip& enemy) { // TODO: ƒобавить вращение дл
 	enemy.getShape().setPosition(sf::Vector2f(x, y));
 }
 
+
+void Helper::calcEnemyDirection(EnemyShip& enemy, const float realSize, const float relativeSize, const bool from) {
+
+	float directToEnemy = players[0].getDirectionToEnemy(enemy);
+
+	float alpha = acos(relativeSize / realSize);
+	radiansToDegrees(alpha);
+
+	if (from) {
+		enemy.getPhysics().setDirection(90.f - alpha + directToEnemy);
+	} else {
+		enemy.getPhysics().setDirection(270.f - alpha + directToEnemy);
+	}
+}
+
 float degreesToRadians(const float degrees) {
 	return (PI * degrees) / 180.f;
+}
+
+float radiansToDegrees(const float radians) {
+	return (180.f * radians) / PI;
 }

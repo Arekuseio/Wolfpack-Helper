@@ -25,6 +25,9 @@ private:
 
 	void calcEnemyPosition(EnemyShip& enemy);
 
+	// Calculating enemy ship direction using his real length and relative length
+	void calcEnemyDirection(EnemyShip& enemy, const float realLength, const float relativeLength, bool from);
+
 	sf::Vector2i calcShipSize(const sf::Vector2i& windowSize);
 
 	sf::RenderWindow mainWindow;
