@@ -86,15 +86,30 @@ void Helper::initEnemies() {
 			player.setDistanceToEnemy(enemy, distance);
 			player.setDirectionToEnemy(enemy, direction);
 
-
-			// TODO: Исправить то что позиция просчитывается заново для каждого игрока
 			calcEnemyPosition(enemy);
 
 			enemy.getPhysics().setSpeed(speed);
 			
 			enemy.setDistanceFromPlayer(player, distance);
 			enemy.setDirectionFromPlayer(player, direction);
+
+			
 		}
+	}
+
+	int enemynum = 1;
+	float realSize = 0;
+	float relativeSize = 0;
+	bool from = false;
+
+	for (auto& enemy : enemies) {
+		std::cout << "Input the real length of enemy number " << enemynum
+			<< ", length relative to the first ship and direction of movement (0/1 (at you, from you))" << std::endl;
+
+		std::cin >> realSize >> relativeSize >> from;
+
+		calcEnemyDirection(enemy, realSize, relativeSize, from);
+		enemynum++;
 	}
 }
 
@@ -114,19 +129,21 @@ void Helper::initPlayers() {
 }
 
 void Helper::calcEnemyPosition(EnemyShip& enemy) {
-	sf::Vector2f position(0.f, 0.f);
-	float x = 0;
-	float y = 0;
-	float angle = 0;
-	angle = degreesToRadians(players[0].getDirectionToEnemy(enemy));
+	if (enemy.getPosition() == sf::Vector2f(0.f, 0.f)) {
+		sf::Vector2f position(0.f, 0.f);
+		float x = 0;
+		float y = 0;
+		float angle = 0;
+		angle = degreesToRadians(players[0].getDirectionToEnemy(enemy));
 
-	x = players[0].getShape().getPosition().x + (sin(angle) * players[0].getDistanceToEnemy(enemy))
-		* (mainWindow.getSize().x / (mapsize));
+		x = players[0].getShape().getPosition().x + (sin(angle) * players[0].getDistanceToEnemy(enemy))
+			* (mainWindow.getSize().x / (mapsize));
 
-	y = players[0].getShape().getPosition().y + (-cos(angle) * players[0].getDistanceToEnemy(enemy))
-		* (mainWindow.getSize().y / (mapsize));
+		y = players[0].getShape().getPosition().y + (-cos(angle) * players[0].getDistanceToEnemy(enemy))
+			* (mainWindow.getSize().y / (mapsize));
 
-	enemy.getShape().setPosition(sf::Vector2f(x, y));
+		enemy.getShape().setPosition(sf::Vector2f(x, y));
+	}
 }
 
 
@@ -135,13 +152,18 @@ void Helper::calcEnemyDirection(EnemyShip& enemy, const float realSize, const fl
 	float directToEnemy = players[0].getDirectionToEnemy(enemy);
 
 	float alpha = acos(relativeSize / realSize);
-	radiansToDegrees(alpha);
+	alpha = radiansToDegrees(alpha);
+
+	
+	float direction = 0;
 
 	if (from) {
-		enemy.getPhysics().setDirection(90.f - alpha + directToEnemy);
+		direction = 90.f - alpha + directToEnemy;
 	} else {
-		enemy.getPhysics().setDirection(270.f - alpha + directToEnemy);
+		direction = 270.f - alpha + directToEnemy;
 	}
+	enemy.getPhysics().setDirection(direction);
+	enemy.getShape().setRotation(direction);
 }
 
 float degreesToRadians(const float degrees) {
