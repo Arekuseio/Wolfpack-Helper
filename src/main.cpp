@@ -3,6 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
+#include <thread>
 #include "Helper.h"
 
 int main()
@@ -15,11 +16,18 @@ int main()
         config >> height;
     }
     sf::Vector2i size(width, height);
-    int num = 2;
+    int enemyNum = 2;
     size_t points = 100;
     sf::Texture a;
     a.loadFromFile("img\\ship.png");
-    Helper help(size, num, a, a, points);
+    Helper help(size, enemyNum, a, a, points);
+    std::thread initThr(
+        [&] {
+            help.init();
+        }
+    );
     help.onFrame();
+
+    initThr.join();
     return 0;
 }

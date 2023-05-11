@@ -36,7 +36,7 @@ public:
 private:
 
 	// Biggest and smallest radiuses of the ellipse shape of ship
-	sf::Vector2i size = sf::Vector2i(0.f, 0.f);
+	sf::Vector2i size = sf::Vector2i(0, 0);
 
 	// Numbers of points in shape
 	size_t pointsNum = 0;

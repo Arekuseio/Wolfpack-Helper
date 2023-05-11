@@ -13,16 +13,21 @@ public:
 	void initBackground(const sf::Texture& backgroundTexture); // TODO: Добавить инициализацию фона
 
 	void addPlayer(const PlayerShip& player);
-
 	void addEnemy(const EnemyShip& enemy);
+
+	void init();
 
 	void onFrame();
 private:
 
+	int enemyNum;
+	int playerNum;
+
+	ShipShape playerShape;
+	ShipShape enemyShape;
+
 	void initEnemies();
-
 	void initPlayers();
-
 	void calcEnemyPosition(EnemyShip& enemy);
 
 	// Calculating enemy ship direction using his real length and relative length
@@ -35,7 +40,6 @@ private:
 	sf::Sprite background;
 
 	std::vector<PlayerShip> players;
-
 	std::vector<EnemyShip> enemies;
 
 	// Map size in kilometeres

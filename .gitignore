@@ -1,2 +1,7 @@
 
 gui/imgui
+*.obj
+x64/
+bin/
+gui/SFML-2.5.1/bin
+.vs/

@@ -1,7 +1,9 @@
 #include "Helper.h"
+#include <thread>
+#include <chrono>
 
 #ifndef  PI
-#define PI 3.14159265
+#define PI 3.14159265f
 #endif // ! PI
 
 
@@ -14,17 +16,23 @@ Helper::Helper(const sf::Vector2i& windowSize, const int enemiesNum, const sf::T
 	mainWindow.create(sf::VideoMode(windowSize.x, windowSize.y), "Wolfpack Helper",
 					  sf::Style::Close);
 
+	this->enemyNum = enemiesNum;
+	this->playerNum = 1;
+
 	sf::Vector2i shipSize = calcShipSize(windowSize);
 
-	ShipShape playerShape = ShipShape(playerTexture, shipSize, quality);
+	playerShape = ShipShape(playerTexture, shipSize, quality);
 	playerShape.setPosition(windowSize.x / 2.f, windowSize.y / 2.f);
+	enemyShape = ShipShape(enemyTexture, shipSize, quality);
 
-	players.push_back(PlayerShip(playerShape, ShipPhysics()));
+	//players.push_back(PlayerShip(playerShape, ShipPhysics()));
+	//
+	//for (int i = 0; i < enemiesNum; ++i) {
+	//	enemies.push_back(EnemyShip{ ShipShape(enemyTexture, shipSize, quality), ShipPhysics() });
+	//}
+}
 
-	for (int i = 0; i < enemiesNum; ++i) {
-		enemies.push_back(EnemyShip{ ShipShape(enemyTexture, shipSize, quality), ShipPhysics() });
-	}
-
+void Helper::init() {
 	initPlayers();
 	initEnemies();
 }
@@ -47,6 +55,8 @@ void Helper::onFrame() {
 		}
 
 		mainWindow.display();
+
+		std::this_thread::sleep_for(std::chrono::milliseconds(1));
 	}
 }
 
@@ -67,33 +77,28 @@ void Helper::initEnemies() {
 	float distance = 0;
 	float direction = 0;
 
-	int playerNum = 1;
-
 	for (auto& player : players) {
 
 		std::cout << "Input " 
-			<< enemies.size()
+			<< enemyNum
 			<< " distances, speeds and directions to enemy ships from player number "
 			<< playerNum << " :"
 			<< std::endl;
 
-		for (auto& enemy : enemies) {
-
-			// Сначала ввод данных, затем по ним расчет позиции врага
+		for (int i = 0; i < enemyNum; ++i) {
+			enemies.push_back(EnemyShip{ enemyShape, ShipPhysics() });
 
 			std::cin >> distance >> speed >> direction;
 
-			player.setDistanceToEnemy(enemy, distance);
-			player.setDirectionToEnemy(enemy, direction);
+			player.setDistanceToEnemy(enemies[i], distance);
+			player.setDirectionToEnemy(enemies[i], direction);
 
-			calcEnemyPosition(enemy);
+			calcEnemyPosition(enemies[i]);
 
-			enemy.getPhysics().setSpeed(speed);
-			
-			enemy.setDistanceFromPlayer(player, distance);
-			enemy.setDirectionFromPlayer(player, direction);
+			enemies[i].getPhysics().setSpeed(speed);
 
-			
+			enemies[i].setDistanceFromPlayer(player, distance);
+			enemies[i].setDirectionFromPlayer(player, direction);
 		}
 	}
 
@@ -114,17 +119,14 @@ void Helper::initEnemies() {
 }
 
 void Helper::initPlayers() {
-	std::cout << "Input " << players.size() << " current speeds and directions" << std::endl;
+	std::cout << "Input " << playerNum << " current speeds and directions" << std::endl;
 	float speed = 0;
 	float direction = 0;
 
-	for (auto& player : players) {
+	for (int i = 0; i < playerNum; ++i) {
 		std::cin >> speed >> direction;
-
-		player.getPhysics().setSpeed(speed);
-		player.getPhysics().setDirection(direction);
-
-		player.getShape().setRotation(direction);
+		players.push_back({ playerShape, ShipPhysics(speed, 0, direction) });
+		players[i].getShape().setRotation(direction);
 	}
 }
 
