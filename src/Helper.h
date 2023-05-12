@@ -2,8 +2,10 @@
 #include <SFML/Graphics.hpp>
 #include "PlayerShip.h"
 #include "EnemyShip.h"
+#include "Button.h"
 #include <vector>
 #include <iostream>
+#include <memory>
 
 class Helper {
 public:
@@ -29,6 +31,11 @@ private:
 	void initEnemies();
 	void initPlayers();
 	void calcEnemyPosition(EnemyShip& enemy);
+	void drawShips();
+	void drawButtons();
+
+	void processMouseMove();
+	void processMouseClick();
 
 	// Calculating enemy ship direction using his real length and relative length
 	void calcEnemyDirection(EnemyShip& enemy, const float realLength, const float relativeLength, bool from);
@@ -46,4 +53,10 @@ private:
 	float mapsize = 20.f;
 
 	size_t shipSize = 0;
+
+	bool showShips = true;
+
+	std::vector<std::shared_ptr<Button>> buttons;
+
+	sf::Font textFont;
 };

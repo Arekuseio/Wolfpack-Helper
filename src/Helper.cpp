@@ -11,7 +11,7 @@ float degreesToRadians(const float degrees);
 float radiansToDegrees(const float radians);
 
 Helper::Helper(const sf::Vector2i& windowSize, const int enemiesNum, const sf::Texture& enemyTexture,
-			   const sf::Texture& playerTexture, size_t quality) {
+	const sf::Texture& playerTexture, size_t quality)  {
 
 	mainWindow.create(sf::VideoMode(windowSize.x, windowSize.y), "Wolfpack Helper",
 					  sf::Style::Close);
@@ -25,11 +25,23 @@ Helper::Helper(const sf::Vector2i& windowSize, const int enemiesNum, const sf::T
 	playerShape.setPosition(windowSize.x / 2.f, windowSize.y / 2.f);
 	enemyShape = ShipShape(enemyTexture, shipSize, quality);
 
-	//players.push_back(PlayerShip(playerShape, ShipPhysics()));
-	//
-	//for (int i = 0; i < enemiesNum; ++i) {
-	//	enemies.push_back(EnemyShip{ ShipShape(enemyTexture, shipSize, quality), ShipPhysics() });
-	//}
+	textFont.loadFromFile("fonts\\OxfordStreet.ttf");
+	std::shared_ptr<Button> calcButton = std::shared_ptr<Button>(new Button("Calculate", { 120, 50 }, 20, sf::Color::White, sf::Color::Black));
+	calcButton->setFont(textFont);
+	calcButton->setPosition({ 0, 0 });
+	calcButton->setClickEvent([] { std::cout << "Clicked" << '\n'; });
+	calcButton->setMouseOverEvent([=] { calcButton->setBackColor(sf::Color::Cyan); });
+	calcButton->setMouseNotOverEvent([=] { calcButton->setBackColor(sf::Color::White); });
+
+	std::shared_ptr<Button> showHideButton = std::shared_ptr<Button>(new Button("Show/Hide ships", { 140, 50 }, 20, sf::Color::White, sf::Color::Black));
+	showHideButton->setFont(textFont);
+	showHideButton->setPosition({ windowSize.x / 2.f, 0 });
+	showHideButton->setClickEvent([&] {	showShips = !showShips; });
+	showHideButton->setMouseOverEvent([=] { showHideButton->setBackColor(sf::Color::Cyan); });
+	showHideButton->setMouseNotOverEvent([=] { showHideButton->setBackColor(sf::Color::White); });
+
+	buttons.push_back(calcButton);
+	buttons.push_back(showHideButton);
 }
 
 void Helper::init() {
@@ -41,22 +53,68 @@ void Helper::onFrame() {
 	while (mainWindow.isOpen()) {
 		sf::Event event;
 		while (mainWindow.pollEvent(event)) {
-			if (event.type == sf::Event::Closed)
+
+			switch (event.type) {
+
+			case sf::Event::Closed:
 				mainWindow.close();
+				break;
+
+			case sf::Event::MouseMoved:
+				processMouseMove();
+				break;
+
+			case sf::Event::MouseButtonPressed:
+				processMouseClick();
+				break;
+			}
 		}
 		mainWindow.clear(sf::Color::Blue);
 
-		for (auto& player : players) {
-			mainWindow.draw(player.getShape());
+		if (showShips) {
+			drawShips();
 		}
-		
-		for (auto& enemy : enemies) {
-			mainWindow.draw(enemy.getShape());
-		}
+
+		drawButtons();
 
 		mainWindow.display();
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
+	}
+}
+
+void Helper::processMouseClick() {
+	for (auto& b : buttons) {
+		if (b->isMouseOver(mainWindow)) {
+			b->onClicked();
+		}
+	}
+}
+
+void Helper::processMouseMove() {
+	for (auto& b : buttons) {
+		if (b->isMouseOver(mainWindow)) {
+			b->onMouseOver();
+		}
+		else {
+			b->onMouseNotOver();
+		}
+	}
+}
+
+void Helper::drawButtons() {
+	for (auto& b : buttons) {
+		b->drawTo(mainWindow);
+	}
+}
+
+void Helper::drawShips() {
+	for (auto& player : players) {
+		mainWindow.draw(player.getShape());
+	}
+
+	for (auto& enemy : enemies) {
+		mainWindow.draw(enemy.getShape());
 	}
 }
 
@@ -81,7 +139,7 @@ void Helper::initEnemies() {
 
 		std::cout << "Input " 
 			<< enemyNum
-			<< " distances, speeds and directions to enemy ships from player number "
+			<< " distances (km.), speeds (kn.) and directions (deg.) to enemy ships from player number "
 			<< playerNum << " :"
 			<< std::endl;
 
@@ -108,8 +166,8 @@ void Helper::initEnemies() {
 	bool from = false;
 
 	for (auto& enemy : enemies) {
-		std::cout << "Input the real length of enemy number " << enemynum
-			<< ", length relative to the first ship and direction of movement (0/1 (at you, from you))" << std::endl;
+		std::cout << "Input the real length (m.) of enemy number " << enemynum
+			<< ", length looking from the first ship and direction (deg.) of movement (0/1 (at you, from you))" << std::endl;
 
 		std::cin >> realSize >> relativeSize >> from;
 
@@ -119,7 +177,7 @@ void Helper::initEnemies() {
 }
 
 void Helper::initPlayers() {
-	std::cout << "Input " << playerNum << " current speeds and directions" << std::endl;
+	std::cout << "Input " << playerNum << " current speeds (kn.) and directions (deg.)" << std::endl;
 	float speed = 0;
 	float direction = 0;
 

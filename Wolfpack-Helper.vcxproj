@@ -131,6 +131,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Button.cpp" />
     <ClCompile Include="src\EnemyShip.cpp" />
     <ClCompile Include="src\Helper.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -140,6 +141,7 @@
     <ClCompile Include="src\ShipShape.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Button.h" />
     <ClInclude Include="src\EnemyShip.h" />
     <ClInclude Include="src\Helper.h" />
     <ClInclude Include="src\PlayerShip.h" />
